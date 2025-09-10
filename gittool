@@ -1,0 +1,39 @@
+#!/bin/bash
+
+timestamp=$(date +"%m/%d/%y_%H%M")
+toolfold="~/Documents/tools"
+
+echo -e "you can:\n'pull' pull  from GitHub\n'update' update with passkey already saved\n'breakdown' save changes and disconnect"
+read -p "what would you like to do? " response
+
+#pull creates the directory and clones the repo to local computer
+if [[ "$response" == "pull" ]]; then
+        if [[ ! -d ~/Documents/tools ]]; then
+		mkdir "$toolfold"
+		git clone https://github.com/dinjeswyo/tools "$toolfold"
+        else
+		cd $toolfold
+		git clone https://github.com/dinjeswyo/tools "$toolfold"
+		cd -
+	fi
+#update is for updating while still working
+elif [[ "$response" == "update" ]]; then
+	cd "$toolfold"
+	git add "$toolfold"
+        git commit -m "$timestamp"
+        git push origin master
+	cd -
+#breakdown closes directory and removes after saving and pushing
+elif [[ "$response" == "breakdown" ]]; then
+	cd "$toolfold"
+	git add ~/Documents/tools
+        git commit -m "$timestamp"
+        git push origin master
+	git remote remove origin
+	rm -rf "$toolfold"
+	cd -
+else
+	echo "improper response"
+fi
+
+
